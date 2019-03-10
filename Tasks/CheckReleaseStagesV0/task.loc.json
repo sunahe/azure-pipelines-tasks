@@ -1,0 +1,45 @@
+{
+  "id": "FCF5CA4C-BD4A-4792-B641-8C9F015E994F",
+  "name": "checkReleaseStages",
+  "friendlyName": "ms-resource:loc.friendlyName",
+  "description": "ms-resource:loc.description",
+  "author": "Alexander Omelchuk",
+  "helpMarkDown": "ms-resource:loc.helpMarkDown",
+  "category": "Utility",
+  "visibility": [
+    "Release"
+  ],
+  "runsOn": [
+    "ServerGate"
+  ],
+  "version": {
+    "Major": 0,
+    "Minor": 0,
+    "Patch": 3
+  },
+  "instanceNameFormat": "ms-resource:loc.instanceNameFormat",
+  "groups": [],
+  "inputs": [
+    {
+      "name": "stagesToCheck",
+      "type": "string",
+      "label": "ms-resource:loc.input.label.stagesToCheck",
+      "defaultValue": "",
+      "required": "true",
+      "helpMarkDown": "ms-resource:loc.input.help.stagesToCheck"
+    }
+  ],
+  "execution": {
+    "HttpRequest": {
+      "Execute": {
+        "EndpointId": "",
+        "EndpointUrl": "$(system.teamFoundationCollectionUri)$(system.teamProjectId)/_apis/release/releases/$(release.releaseid)?api-version=4.1",
+        "Method": "GET",
+        "Body": "",
+        "Headers": "{\n\"Content-Type\":\"application/json\"\n, \"Authorization\":\"Bearer $(system.accesstoken)\"\n}",
+        "WaitForCompletion": "false",
+        "Expression": "eq(count(intersect(jsonpath('$.environments[?(@.status==''canceled'' || @.status==''partiallySucceeded'' || @.status==''rejected'' || @.status==''succeeded'')].name'), split('$(stagesToCheck)', ';'))), count(split('$(stagesToCheck)', ';')))"
+      }
+    }
+  }
+}

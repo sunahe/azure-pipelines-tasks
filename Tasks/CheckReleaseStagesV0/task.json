@@ -1,0 +1,45 @@
+{
+    "id": "FCF5CA4C-BD4A-4792-B641-8C9F015E994F",
+    "name": "checkReleaseStages",
+    "friendlyName": "Check Release Stages",
+    "description": "Checks that specified stages of the current release are finished.",
+    "author": "Alexander Omelchuk",
+    "helpMarkDown": "Use this gate to run a release stage automatically after other stages, regardless of their completion state. That can be used for cleanup or custom reports.  The gate passes when all stages are in one of the following states: Succeeded, Succeeded (partial), Failed, Canceled",
+    "category": "Utility",
+    "visibility": [
+        "Release"
+    ],
+    "runsOn": [
+        "ServerGate"
+    ],
+    "version": {
+        "Major": 0,
+        "Minor": 0,
+        "Patch": 3
+    },
+    "instanceNameFormat": "Check Release Stages",
+    "groups": [],
+    "inputs": [
+        {
+            "name": "stagesToCheck",
+            "type": "string",
+            "label": "Stages to wait for",
+            "defaultValue": "",
+            "required": "true",
+            "helpMarkDown": "The list of stages to wait for.  The list is separated by semicolons, no extra whitespace allowed. Values are case-insensitive."
+        }
+    ],
+    "execution": {
+        "HttpRequest": {
+            "Execute": {
+                "EndpointId": "",
+                "EndpointUrl": "$(system.teamFoundationCollectionUri)$(system.teamProjectId)/_apis/release/releases/$(release.releaseid)?api-version=4.1",
+                "Method": "GET",
+                "Body": "",
+                "Headers": "{\n\"Content-Type\":\"application/json\"\n, \"Authorization\":\"Bearer $(system.accesstoken)\"\n}",
+                "WaitForCompletion": "false",
+                "Expression": "eq(count(intersect(jsonpath('$.environments[?(@.status==''canceled'' || @.status==''partiallySucceeded'' || @.status==''rejected'' || @.status==''succeeded'')].name'), split('$(stagesToCheck)', ';'))), count(split('$(stagesToCheck)', ';')))"
+            }
+        }
+    }
+}

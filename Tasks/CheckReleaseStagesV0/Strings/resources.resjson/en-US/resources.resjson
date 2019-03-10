@@ -1,0 +1,8 @@
+{
+  "loc.friendlyName": "Check Release Stages",
+  "loc.helpMarkDown": "Use this gate to run a release stage automatically after other stages, regardless of their completion state. That can be used for cleanup or custom reports.  The gate passes when all stages are in one of the following states: Succeeded, Succeeded (partial), Failed, Canceled",
+  "loc.description": "Checks that specified stages of the current release are finished.",
+  "loc.instanceNameFormat": "Check Release Stages",
+  "loc.input.label.stagesToCheck": "Stages to wait for",
+  "loc.input.help.stagesToCheck": "The list of stages to wait for.  The list is separated by semicolons, no extra whitespace allowed. Values are case-insensitive."
+}
